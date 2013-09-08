@@ -27,4 +27,4 @@ Func型に対する拡張メソッド群です。
 #ライセンス
 
 NYSL Version 0.9982 に従います。
-詳しくはLicense.txtをご覧ください。
+詳しくはLICENSE.mdをご覧ください。
