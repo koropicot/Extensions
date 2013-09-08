@@ -15,7 +15,7 @@ namespace Extensions
 
         internal static ConsList<T> Nil()
         {
-            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C1(Unit.New())); ;
+            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C1(Unit._)); ;
         }
         internal static ConsList<T> Cons(T head, ConsList<T> tail)
         {

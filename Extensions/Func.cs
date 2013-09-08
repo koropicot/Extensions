@@ -178,7 +178,7 @@ namespace Extensions
         /// <summary>Unitを取る関数を0引数関数にします。</summary>
         public static Func<TResult> UnTuplize<TResult>(this Func<Unit, TResult> func)
         {
-            return () => func(Unit.New());
+            return () => func(Unit._);
         }
 
         /// <summary>1引数関数を1要素のタプルを取る関数にします。</summary>

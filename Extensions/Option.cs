@@ -17,7 +17,7 @@ namespace Extensions
         }
         public static Option<T> None()
         {
-            return new Option<T>(Variant<T, Unit>.C2(Unit.New()));  
+            return new Option<T>(Variant<T, Unit>.C2(Unit._));  
         }
         public TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None)
         {
