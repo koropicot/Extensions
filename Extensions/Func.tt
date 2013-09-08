@@ -32,7 +32,7 @@ namespace Extensions
         }
 <# } #>
 
-	     public static Func<Unit, TResult> Tuplize<TResult>(this Func<TResult> func)
+        public static Func<Unit, TResult> Tuplize<TResult>(this Func<TResult> func)
         {
             return _ => func();
         }
@@ -48,7 +48,7 @@ namespace Extensions
 			var types = Repeat("T{0}", ",", 1, arity);
 
 #>
-	     public static Func<Tuple<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
+        public static Func<Tuple<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
         {
             return tuple => func(<#= Repeat("tuple.Item{0}", ",", 1, arity) #>);
         }
@@ -65,7 +65,7 @@ namespace Extensions
 
 #>
         public static <#= Nest("Func<T1, TResult>", "Func<T{1}, {0}>", 2, arity-1) #> _<<#= types #>, TResult>(
-		    this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
+            this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
         {
             return <#= Nest("v1 => func" + Repeat("(v{0})", "", 1, arity) + "", "v{1} => {0}", 2, arity-1) #>;
         }
