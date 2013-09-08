@@ -14,6 +14,7 @@ namespace Extensions
     {
 		var types = Repeat("T{0}", ",", 1, order);
 		var constructorFormat =string.Format(@"
+        /// <summary>{{0}}個目のコンストラクタです。</summary>
         private T{{0}} value{{0}};
         public static Variant<{0}> C{{0}}(T{{0}} v{{0}})
         {{{{
@@ -22,12 +23,13 @@ namespace Extensions
             return v;
         }}}}",types);
 #>
+    /// <summary>コンストラクタが<#=order#>個のバリアントです。</summary>
     public sealed class Variant<<#=types#>>
     {
         private Variant(){}
         private int label;
 <#=Repeat(constructorFormat,"",1,order)#>
-
+        /// <summary>パターンマッチをします。</summary>
         public T Match<T>(<#=Repeat("Func<T{0}, T> C{0}",",",1,order)#>)
         {
             switch (this.label)

@@ -21,22 +21,25 @@ namespace Extensions
 			var types = Repeat("T{0}", ",", 1, arity);
 
 #>
+        /// <summary><#=arity#>引数関数をカリー化します。</summary>
         public static <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> Curry<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
         {
             return <#= Nest("func(" + Repeat("v{0}", ",", 1, arity) + ")", "v{1} => {0}", 1, arity) #>;
         }
-
+        /// <summary>カリー化された<#=arity#>引数関数をアンカリー化します。</summary>
         public static Func<<#= types #>, TResult> UnCurry<<#= types #>, TResult>(this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
         {
             return (<#=Repeat("v{0}", ",", 1, arity)#>) => func<#= Repeat("(v{0})", "", 1, arity) #>;
         }
+
 <# } #>
 
+        /// <summary>0引数関数をUnitを取る関数にします。</summary>
         public static Func<Unit, TResult> Tuplize<TResult>(this Func<TResult> func)
         {
             return _ => func();
         }
-
+        /// <summary>Unitを取る関数を0引数関数にします。</summary>
         public static Func<TResult> UnTuplize<TResult>(this Func<Unit, TResult> func)
         {
             return () => func(Unit.New());
@@ -48,11 +51,12 @@ namespace Extensions
 			var types = Repeat("T{0}", ",", 1, arity);
 
 #>
+        /// <summary><#=arity#>引数関数を<#=arity#>要素のタプルを取る関数にします。</summary>
         public static Func<Tuple<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
         {
             return tuple => func(<#= Repeat("tuple.Item{0}", ",", 1, arity) #>);
         }
-
+        /// <summary><#=arity#>要素のタプルを取る関数を<#=arity#>引数関数にします。</summary>
         public static Func<<#= types #>, TResult> UnTuplize<<#= types #>, TResult>(this Func<Tuple<<#= types #>>, TResult> func)
         {
             return (<#=Repeat("v{0}", ",", 1, arity)#>) => func(Tuple.Create(<#= Repeat("v{0}", ",", 1, arity) #>));
@@ -64,6 +68,7 @@ namespace Extensions
 			var types = Repeat("T{0}", ",", 1, arity);
 
 #>
+        /// <summary>カリー化された<#=arity#>引数関数の第1引数を最後に回すことで部分適用の適用しない部分を実現します。</summary>
         public static <#= Nest("Func<T1, TResult>", "Func<T{1}, {0}>", 2, arity-1) #> _<<#= types #>, TResult>(
             this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
         {
