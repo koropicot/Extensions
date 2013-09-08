@@ -1,0 +1,16 @@
+﻿<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #><#+
+	string Nest(string seed, string format, int start, int count)
+    {
+        return count == 0
+            ? seed
+            : string.Format(format, Nest(seed, format, start + 1, count - 1), start);
+    }
+
+	string Repeat(string format, string separator, int start, int count)
+	{
+		return string.Join(separator, Enumerable.Range(start, count).Select(i=>string.Format(format, i)));
+	}
+#>

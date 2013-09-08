@@ -4,40 +4,33 @@ using System.Linq;
 
 namespace Extensions
 {
-    public abstract class ConsList<T> : IEnumerable<T>
+    //ConsList<T> = Variant<Unit,Tuple<T,ConsList<T>>>
+    public sealed class ConsList<T> : IEnumerable<T>
     {
-        public abstract TResult Match<TResult>(Func<TResult> Nill, Func<T, ConsList<T>, TResult> Cons);
-        public static ConsList<T> NewNill() { return new Nill(); }
-        public static ConsList<T> NewCons(T head, ConsList<T> tail) { return new Cons(head, tail); }
-
-        class Nill : ConsList<T>
+        private Variant<Unit, Tuple<T, ConsList<T>>> variant;
+        private ConsList(Variant<Unit, Tuple<T, ConsList<T>>> variant) 
         {
-            public override TResult Match<TResult>(Func<TResult> Nill, Func<T, ConsList<T>, TResult> Cons)
-            {
-                return Nill();
-            }
+            this.variant = variant;
         }
-        class Cons : ConsList<T>
-        {
-            T head;
-            ConsList<T> tail;
-            public Cons(T head, ConsList<T> tail)
-            {
-                this.head = head;
-                this.tail = tail;
-            }
 
-            public override TResult Match<TResult>(Func<TResult> Nill, Func<T, ConsList<T>, TResult> Cons)
-            {
-                return Cons(head, tail);
-            }
+        internal static ConsList<T> Nil()
+        {
+            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C1(Unit.New())); ;
+        }
+        internal static ConsList<T> Cons(T head, ConsList<T> tail)
+        {
+            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C2(Tuple.Create(head, tail)));
+        }
+        public TResult Match<TResult>(Func<TResult> Nil, Func<T, ConsList<T>, TResult> Cons)
+        {
+            return variant.Match(Nil.Tuplize(), Cons.Tuplize());
         }
     
         public IEnumerator<T> GetEnumerator()
         {
             return 
                 Ex.Unfold(this,cl => cl.Match(
-                    Nill: () => Option.None<Tuple<T, ConsList<T>>>(),
+                    Nil: () => Option.None<Tuple<T, ConsList<T>>>(),
                     Cons: (h, t) => Option.Some(Tuple.Create(h, t))))
                 .GetEnumerator();
         }  
@@ -48,22 +41,24 @@ namespace Extensions
         }
     }
 
-
     public static class ConsList
     {
         public static ConsList<T> Cons<T>(T head, ConsList<T> tail)
         {
-            return ConsList<T>.NewCons(head, tail);
+            return ConsList<T>.Cons(head, tail);
         }
-        public static ConsList<T> Nill<T>()
+        public static ConsList<T> Nil<T>()
         {
-            return ConsList<T>.NewNill();
+            return ConsList<T>.Nil();
+        }
+
+        public static TResult Fold<T, TResult>(this ConsList<T> list, Func<TResult> nil, Func<T, TResult, TResult> cons)
+        {
+            return list.Match(nil, (t, l) => cons(t, l.Fold(nil, cons)));
         }
         public static ConsList<T> ToConsList<T>(this IEnumerable<T> seq)
         {
-            return seq.Any()
-                ? ConsList.Cons(seq.First(), seq.Skip(1).ToConsList())
-                : ConsList.Nill<T>();
+            return seq.Any() ? ConsList<T>.Cons(seq.First(), seq.Skip(1).ToConsList()) : ConsList<T>.Nil();
         }
     }
 }

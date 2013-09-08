@@ -2,29 +2,25 @@
 
 namespace Extensions
 {
-    public abstract class Either<TLeft, TRight> {
-        public abstract TResult Match<TResult>(Func<TLeft, TResult> Left, Func<TRight,TResult> Right);
-        public static Either<TLeft, TRight> NewLeft(TLeft value) { return new Left(value); }
-        public static Either<TLeft, TRight> NewRight(TRight value) { return new Right(value); }
-        class Left : Either<TLeft, TRight>
+    //Either<TLeft,TRight> = Variant<TLeft,TRight>
+    public sealed class Either<TLeft, TRight> {
+        private Variant<TLeft, TRight> variant;
+        private Either(Variant<TLeft, TRight> variant)
         {
-            TLeft value;
-            public Left(TLeft value) { this.value = value; }
-
-            public override TResult Match<TResult>(Func<TLeft, TResult> Left, Func<TRight, TResult> Right)
-            {
-                return Left(value);
-            }
+            this.variant = variant;
         }
-        class Right : Either<TLeft, TRight>
-        {
-            TRight value;
-            public Right(TRight value) { this.value = value; }
 
-            public override TResult Match<TResult>(Func<TLeft, TResult> Left, Func<TRight, TResult> Right)
-            {
-                return Right(value);
-            }
+        public static Either<TLeft, TRight> Left(TLeft left)
+        {
+            return new Either<TLeft, TRight>(Variant<TLeft, TRight>.C1(left));
+        }
+        public static Either<TLeft, TRight> Right(TRight right)
+        {
+            return new Either<TLeft, TRight>(Variant<TLeft, TRight>.C2(right));
+        }
+        public TResult Match<TResult>(Func<TLeft, TResult> Left, Func<TRight, TResult> Right)
+        {
+            return variant.Match(Left, Right);
         }
     }
 
@@ -32,11 +28,11 @@ namespace Extensions
     {
         public static Either<TLeft, TRight> Left<TLeft, TRight>(TLeft value)
         {
-            return Either<TLeft, TRight>.NewLeft(value);
+            return Either<TLeft, TRight>.Left(value);
         }
         public static Either<TLeft, TRight> Right<TLeft, TRight>(TRight value)
         {
-            return Either<TLeft, TRight>.NewRight(value);
+            return Either<TLeft, TRight>.Right(value);
         }
     }
 

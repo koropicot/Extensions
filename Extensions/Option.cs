@@ -2,35 +2,38 @@
 
 namespace Extensions
 {
-    public abstract class Option<T> 
-    {  
-        public abstract TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None);
-        public static Option<T> NewSome(T value) { return new Some(value); }
-        public static Option<T> NewNone() { return new None(); }
-
-        class Some : Option<T>
+    //Option<T> = Variant<T, Unit>
+    public sealed class Option<T> 
+    {
+        private Variant<T, Unit> variant;
+        private Option(Variant<T, Unit> variant)
         {
-            T value;
-            public Some(T value) { this.value = value; }
-            public override TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None)
-            {
-                return Some(value);
-            }
-            public override string ToString() { return string.Format("Some{{{0}}}", value); }
+            this.variant = variant;
         }
-        class None : Option<T>
+
+        public static Option<T> Some(T value)
         {
-            public override TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None)
-            {
-                return None();
-            }
-            public override string ToString() { return "None"; }
+            return new Option<T>(Variant<T, Unit>.C1(value));
+        }
+        public static Option<T> None()
+        {
+            return new Option<T>(Variant<T, Unit>.C2(Unit.New()));  
+        }
+        public TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None)
+        {
+            return variant.Match(Some,None.Tuplize());
         }
     }
 
     public static class Option
     {
-        public static Option<T> Some<T>(T value) { return Option<T>.NewSome(value); }
-        public static Option<T> None<T>() { return Option<T>.NewNone(); }
+        public static Option<T> Some<T>(T value) 
+        { 
+            return Option<T>.Some(value);
+        }
+        public static Option<T> None<T>() 
+        {
+            return Option<T>.None(); 
+        }
     }
 }

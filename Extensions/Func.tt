@@ -1,0 +1,74 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="Util.ttinclude"#>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Windows.Forms" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+
+namespace Extensions
+{
+    public static class Func
+    {
+<#
+	foreach (var arity in Enumerable.Range(2, 15))
+    {
+			var types = Repeat("T{0}", ",", 1, arity);
+
+#>
+        public static <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> Curry<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
+        {
+            return <#= Nest("func(" + Repeat("v{0}", ",", 1, arity) + ")", "v{1} => {0}", 1, arity) #>;
+        }
+
+        public static Func<<#= types #>, TResult> UnCurry<<#= types #>, TResult>(this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
+        {
+            return (<#=Repeat("v{0}", ",", 1, arity)#>) => func<#= Repeat("(v{0})", "", 1, arity) #>;
+        }
+<# } #>
+
+	     public static Func<Unit, TResult> Tuplize<TResult>(this Func<TResult> func)
+        {
+            return _ => func();
+        }
+
+        public static Func<TResult> UnTuplize<TResult>(this Func<Unit, TResult> func)
+        {
+            return () => func(Unit.New());
+        }
+
+<#
+	foreach (var arity in Enumerable.Range(1, 7))
+    {
+			var types = Repeat("T{0}", ",", 1, arity);
+
+#>
+	     public static Func<Tuple<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
+        {
+            return tuple => func(<#= Repeat("tuple.Item{0}", ",", 1, arity) #>);
+        }
+
+        public static Func<<#= types #>, TResult> UnTuplize<<#= types #>, TResult>(this Func<Tuple<<#= types #>>, TResult> func)
+        {
+            return (<#=Repeat("v{0}", ",", 1, arity)#>) => func(Tuple.Create(<#= Repeat("v{0}", ",", 1, arity) #>));
+        }
+<# } #>
+<#
+	foreach (var arity in Enumerable.Range(1, 15))
+    {
+			var types = Repeat("T{0}", ",", 1, arity);
+
+#>
+        public static <#= Nest("Func<T1, TResult>", "Func<T{1}, {0}>", 2, arity-1) #> _<<#= types #>, TResult>(
+		    this <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> func)
+        {
+            return <#= Nest("v1 => func" + Repeat("(v{0})", "", 1, arity) + "", "v{1} => {0}", 2, arity-1) #>;
+        }
+<# } #>
+    }
+}
