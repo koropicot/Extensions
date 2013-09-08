@@ -5,7 +5,7 @@ C#の俺々拡張ライブラリです。もともとは拡張メソッド群だ
 #主な機能
 ###Ex.cs
 拡張メソッドたち。
-IEnumerableやその他細々とした機能が有ります。
+IEnumerableなどへ細々とした機能を追加します。
 
 ###Variant.cs
 もともとGenericVariantとかいう名前だったやつです。
