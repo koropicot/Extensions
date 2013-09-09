@@ -15,8 +15,9 @@ namespace Extensions
 for (int order = 0; order <= productMax; order++)
 {
     var types = Repeat("T{0}", ", ", order);
-	var prodType = "Product" + (order == 0 ? "" : "<" + types + ">");
+    var prodType = "Product" + (order == 0 ? "" : "<" + types + ">");
 #>
+        /// <summary>任意の型の値から<#=order#>個の関数によって要素が<#=order#>個の組を生成します。</summary>
         public static <#=prodType#> Produce<TSource<#=Repeat(", T{0}", "", order)#>>(
             this TSource source<#=Repeat(", Func<TSource, T{0}> f{0}", "", order)#>)
         {
@@ -29,12 +30,14 @@ for (int order = 1; order <= productMax; order++)
 {
     var types = Repeat("T{0}", ", ", order);
 #>
+        /// <summary>要素が<#=order#>個のTupleからProductに変換します。/summary>
         public static Product<<#=types#>> ToProduct<<#=types#>>(
             this <#=TupleType("T{0}", order)#> tuple)
         {
             return Product.Creat(<#=Repeat(i => "tuple" + TupleItem(i), ", ", order)#>);
         }
 
+        /// <summary>要素が<#=order#>個のProductからTupleに変換します。/summary>
         public static <#=TupleType("T{0}", order)#> ToTuple<<#=types#>>(
             this Product<<#=types#>> prod)
         {
