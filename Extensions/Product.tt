@@ -1,0 +1,96 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ include file="Util.ttinclude"#>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+
+namespace Extensions
+{
+<#
+//0要素の組(=Unit)
+//また他の要素数の組の生成メソッドを静的メソッドとして含む
+#>
+    /// <summary>
+    /// 要素が0個の組です。
+    /// また、各要素数の組を作成するための静的メソッドを提供します。
+    /// </summary>
+    public sealed class Product : IEquatable<Product>
+    {
+        #region Createメソッド
+        /// <summary>0要素の組を生成します。</summary>
+        public static Product Creat()
+        {
+            return new Product();
+        }
+<#
+    foreach (var order in Enumerable.Range(1, productMax))
+    {
+        var types = Repeat("T{0}", ", ", order);
+#>
+        /// <summary><#=order#>要素の組を生成します。</summary>
+        public static Product<<#=types#>> Creat<<#=types#>>(<#=Repeat("T{0} v{0}", ", ", order)#>)
+        {
+            return new Product<<#=types#>>(<#=Repeat("v{0}", ", ", order)#>);
+        }
+<#}#>
+        #endregion
+
+        public Product() { }
+
+        public bool Equals(Product other)
+        {
+            return other == null ? false : true;
+        }
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Product);
+        }
+        public override int GetHashCode()
+        {
+            return 0;
+        }
+        public override string ToString()
+        {
+            return "()";
+        }
+    }
+<#
+    //1~productMax要素の組を生成する
+    foreach (var order in Enumerable.Range(1, productMax))
+    {
+        var className = "Product<" + Repeat("T{0}", ", ", order) + ">";
+#>
+
+    /// <summary>要素が<#=order#>個の組です。</summary>
+    public sealed class <#=className#> : IEquatable<<#=className#>>
+    {
+        public Product(<#=Repeat("T{0} v{0}", ", ", order)#>)
+        {<#=Repeat(@"
+            D{0} =  v{0};", "", order)#>
+        }
+<#=Repeat(@"
+        /// <summary>{0}要素目の値を取得します。</summary>
+        public T{0} D{0} {{ get; private set; }}", "", order)#>
+
+        public bool Equals(<#=className#> other)
+        {
+            return other == null ? false : <#=Repeat("D{0}.Equals(other.D{0})", "\r\n                && ", order)#>;
+        }
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as <#=className#>);
+        }
+        public override int GetHashCode()
+        {
+            return <#=Repeat("D{0}.GetHashCode()", "\r\n                ^ ", order)#>;
+        }
+        public override string ToString()
+        {
+            return "(" + string.Join(", ", new object[] { <#=Repeat("D{0}", ", ", order)#> }) + ")";
+        }
+    }
+<#}#>
+}
