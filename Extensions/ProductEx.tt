@@ -21,7 +21,7 @@ for (int order = 0; order <= productMax; order++)
         public static <#=prodType#> Produce<TSource<#=Repeat(", T{0}", "", order)#>>(
             this TSource source<#=Repeat(", Func<TSource, T{0}> f{0}", "", order)#>)
         {
-            return Product.Creat(<#=Repeat("f{0}(source)", ", ", order)#>);
+            return Product.Create(<#=Repeat("f{0}(source)", ", ", order)#>);
         }
 <#}#>
 
@@ -34,7 +34,7 @@ for (int order = 1; order <= productMax; order++)
         public static Product<<#=types#>> ToProduct<<#=types#>>(
             this <#=TupleType("T{0}", order)#> tuple)
         {
-            return Product.Creat(<#=Repeat(i => "tuple" + TupleItem(i), ", ", order)#>);
+            return Product.Create(<#=Repeat(i => "tuple" + TupleItem(i), ", ", order)#>);
         }
 
         /// <summary>要素が<#=order#>個のProductからTupleに変換します。/summary>

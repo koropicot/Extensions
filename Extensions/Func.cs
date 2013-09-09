@@ -178,7 +178,7 @@ namespace Extensions
         /// <summary>0要素のProductを取る関数を0引数関数にします。</summary>
         public static Func<TResult> UnTuplize<TResult>(this Func<Product, TResult> func)
         {
-            return () => func(Product.Creat());
+            return () => func(Product.Create());
         }
 
         /// <summary>1引数関数を1要素のタプルを取る関数にします。</summary>

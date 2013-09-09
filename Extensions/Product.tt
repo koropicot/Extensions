@@ -21,7 +21,7 @@ namespace Extensions
     {
         #region Createメソッド
         /// <summary>0要素の組を生成します。</summary>
-        public static Product Creat()
+        public static Product Create()
         {
             return new Product();
         }
@@ -31,7 +31,7 @@ namespace Extensions
         var types = Repeat("T{0}", ", ", order);
 #>
         /// <summary><#=order#>要素の組を生成します。</summary>
-        public static Product<<#=types#>> Creat<<#=types#>>(<#=Repeat("T{0} v{0}", ", ", order)#>)
+        public static Product<<#=types#>> Create<<#=types#>>(<#=Repeat("T{0} v{0}", ", ", order)#>)
         {
             return new Product<<#=types#>>(<#=Repeat("v{0}", ", ", order)#>);
         }
