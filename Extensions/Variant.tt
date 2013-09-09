@@ -10,16 +10,16 @@ using System;
 namespace Extensions
 {
 <#
-	foreach (var order in Enumerable.Range(1, 16))
-    {
-		var types = Repeat("T{0}", ",", 1, order);
-		var constructorFormat =string.Format(@"
+for (int order = 1; order <= productMax; order++)
+{
+	var types = Repeat("T{0}", ", ", order);
+	var constructorFormat =string.Format(@"
         /// <summary>{{0}}個目のコンストラクタです。</summary>
         private T{{0}} value{{0}};
         public static Variant<{0}> C{{0}}(T{{0}} v{{0}})
         {{{{
             var v =new Variant<{0}>();
-            v.label={{0}}; v.value{{0}} = v{{0}};
+            v.label = {{0}}; v.value{{0}} = v{{0}};
             return v;
         }}}}",types);
 #>
@@ -28,18 +28,17 @@ namespace Extensions
     {
         private Variant(){}
         private int label;
-<#=Repeat(constructorFormat,"",1,order)#>
+<#=Repeat(constructorFormat, "", order)#>
         /// <summary>パターンマッチをします。</summary>
-        public T Match<T>(<#=Repeat("Func<T{0}, T> C{0}",",",1,order)#>)
+        public T Match<T>(<#=Repeat("Func<T{0}, T> C{0}", ", ", order)#>)
         {
             switch (this.label)
             {<#=Repeat(@"
-                case {0}: return C{0}(this.value{0});","",1,order-1)#>
+                case {0}: return C{0}(this.value{0});", "", order - 1)#>
                 default: return <#=string.Format("C{0}(this.value{0});",order)#>
             }
         }
     }
-<#
-	}
-#>
+
+<#}#>
 }

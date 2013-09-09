@@ -1,16 +1,63 @@
 ﻿<#@ import namespace="System" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Collections.Generic" #><#+
-	string Nest(string seed, string format, int start, int count)
-    {
-        return count == 0
-            ? seed
-            : string.Format(format, Nest(seed, format, start + 1, count - 1), start);
-    }
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var productMax = 16;
+#><#+
+string Nest(string seed, string format, int start, int count)
+{
+    return count == 0
+        ? seed
+        : string.Format(format, Nest(seed, format, start + 1, count - 1), start);
+}
+string Nest(string seed, string format, int count)
+{
+    return Nest(seed, format, 1, count);
+}
 
-	string Repeat(string format, string separator, int start, int count)
-	{
-		return string.Join(separator, Enumerable.Range(start, count).Select(i=>string.Format(format, i)));
-	}
+string Repeat(Func<int, string> selector, string separator, int start, int count)
+{
+    return string.Join(separator, Enumerable.Range(start, count).Select(selector));
+}
+string Repeat(Func<int, string> selector, string separator, int count)
+{
+    return Repeat(selector, separator, 1, count);
+}
+
+string Repeat(string format, string separator, int start, int count)
+{
+    return Repeat(i => string.Format(format, i), separator, start, count);
+}
+string Repeat(string format, string separator, int count)
+{
+    return Repeat(format, separator, 1, count);
+}
+
+string TupleType(string format, int start, int count)
+{
+    return "Tuple<" + Repeat(format, ", ", start, Math.Min(count, 7))
+        + (count > 7 ? "," + TupleType(format, start + 7, count - 7) : "") + ">";
+}
+string TupleType(string format, int count)
+{
+    return TupleType(format, 1, count);
+}
+
+string TupleItem(int number)
+{
+    return Repeat(".Rest", "", (number - 1) / 7) + ".Item" + ((number - 1) % 7 + 1);
+}
+
+string TupleNew(string typeFormat, string valueFormat, int start, int count)
+{
+    return string.Format("new {0}({1}{2})",
+        TupleType(typeFormat, start, count),
+        Repeat(valueFormat, ", ", start, Math.Min(count, 7)),
+        count > 7 ? "," + TupleNew(typeFormat, valueFormat, start + 7, count - 7) : "");
+}
+string TupleNew(string typeFormat, string valueFormat, int count)
+{
+    return TupleNew(typeFormat, valueFormat, 1, count);
+}
 #>
