@@ -53,6 +53,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Product.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductEx.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProductEx.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="Variant.cs">
@@ -72,6 +77,10 @@
     <None Include="Product.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Product.cs</LastGenOutput>
+    </None>
+    <None Include="ProductEx.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ProductEx.cs</LastGenOutput>
     </None>
     <None Include="Util.ttinclude" />
     <None Include="Variant.tt">
