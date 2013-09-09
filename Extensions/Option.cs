@@ -2,22 +2,22 @@
 
 namespace Extensions
 {
-    //Option<T> = Variant<T, Unit>
+    //Option<T> = Variant<T, Product>
     public sealed class Option<T> 
     {
-        private Variant<T, Unit> variant;
-        private Option(Variant<T, Unit> variant)
+        private Variant<T, Product> variant;
+        private Option(Variant<T, Product> variant)
         {
             this.variant = variant;
         }
 
         public static Option<T> Some(T value)
         {
-            return new Option<T>(Variant<T, Unit>.C1(value));
+            return new Option<T>(Variant<T, Product>.C1(value));
         }
         public static Option<T> None()
         {
-            return new Option<T>(Variant<T, Unit>.C2(Unit._));  
+            return new Option<T>(Variant<T, Product>.C2(Product.Creat()));  
         }
         public TResult Match<TResult>(Func<T, TResult> Some, Func<TResult> None)
         {

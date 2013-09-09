@@ -170,15 +170,15 @@ namespace Extensions
         }
 
 
-        /// <summary>0引数関数をUnitを取る関数にします。</summary>
-        public static Func<Unit, TResult> Tuplize<TResult>(this Func<TResult> func)
+        /// <summary>0引数関数を0要素のProductを取る関数にします。</summary>
+        public static Func<Product, TResult> Tuplize<TResult>(this Func<TResult> func)
         {
             return _ => func();
         }
-        /// <summary>Unitを取る関数を0引数関数にします。</summary>
-        public static Func<TResult> UnTuplize<TResult>(this Func<Unit, TResult> func)
+        /// <summary>0要素のProductを取る関数を0引数関数にします。</summary>
+        public static Func<TResult> UnTuplize<TResult>(this Func<Product, TResult> func)
         {
-            return () => func(Unit._);
+            return () => func(Product.Creat());
         }
 
         /// <summary>1引数関数を1要素のタプルを取る関数にします。</summary>

@@ -4,22 +4,22 @@ using System.Linq;
 
 namespace Extensions
 {
-    //ConsList<T> = Variant<Unit,Tuple<T,ConsList<T>>>
+    //ConsList<T> = Variant<Product,Tuple<T,ConsList<T>>>
     public sealed class ConsList<T> : IEnumerable<T>
     {
-        private Variant<Unit, Tuple<T, ConsList<T>>> variant;
-        private ConsList(Variant<Unit, Tuple<T, ConsList<T>>> variant) 
+        private Variant<Product, Tuple<T, ConsList<T>>> variant;
+        private ConsList(Variant<Product, Tuple<T, ConsList<T>>> variant) 
         {
             this.variant = variant;
         }
 
         internal static ConsList<T> Nil()
         {
-            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C1(Unit._)); ;
+            return new ConsList<T>(Variant<Product, Tuple<T, ConsList<T>>>.C1(Product.Creat())); ;
         }
         internal static ConsList<T> Cons(T head, ConsList<T> tail)
         {
-            return new ConsList<T>(Variant<Unit, Tuple<T, ConsList<T>>>.C2(Tuple.Create(head, tail)));
+            return new ConsList<T>(Variant<Product, Tuple<T, ConsList<T>>>.C2(Tuple.Create(head, tail)));
         }
         public TResult Match<TResult>(Func<TResult> Nil, Func<T, ConsList<T>, TResult> Cons)
         {
