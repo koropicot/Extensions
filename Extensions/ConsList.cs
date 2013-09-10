@@ -4,22 +4,22 @@ using System.Linq;
 
 namespace Extensions
 {
-    //ConsList<T> = Variant<Product,Tuple<T,ConsList<T>>>
+    //ConsList<T> = Variant<Product,Product<T,ConsList<T>>>
     public sealed class ConsList<T> : IEnumerable<T>
     {
-        private Variant<Product, Tuple<T, ConsList<T>>> variant;
-        private ConsList(Variant<Product, Tuple<T, ConsList<T>>> variant) 
+        private Variant<Product, Product<T, ConsList<T>>> variant;
+        private ConsList(Variant<Product, Product<T, ConsList<T>>> variant) 
         {
             this.variant = variant;
         }
 
         internal static ConsList<T> Nil()
         {
-            return new ConsList<T>(Variant<Product, Tuple<T, ConsList<T>>>.C1(Product.Create())); ;
+            return new ConsList<T>(Variant<Product, Product<T, ConsList<T>>>.C1(Product.Create())); ;
         }
         internal static ConsList<T> Cons(T head, ConsList<T> tail)
         {
-            return new ConsList<T>(Variant<Product, Tuple<T, ConsList<T>>>.C2(Tuple.Create(head, tail)));
+            return new ConsList<T>(Variant<Product, Product<T, ConsList<T>>>.C2(Product.Create(head, tail)));
         }
         public TResult Match<TResult>(Func<TResult> Nil, Func<T, ConsList<T>, TResult> Cons)
         {
@@ -30,8 +30,8 @@ namespace Extensions
         {
             return 
                 Ex.Unfold(this,cl => cl.Match(
-                    Nil: () => Option.None<Tuple<T, ConsList<T>>>(),
-                    Cons: (h, t) => Option.Some(Tuple.Create(h, t))))
+                    Nil: () => Option.None<Product<T, ConsList<T>>>(),
+                    Cons: (h, t) => Option.Some(Product.Create(h, t))))
                 .GetEnumerator();
         }  
         

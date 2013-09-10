@@ -26,9 +26,9 @@ namespace Extensions
             return new Product();
         }
 <#
-    foreach (var order in Enumerable.Range(1, productMax))
-    {
-        var types = Repeat("T{0}", ", ", order);
+for (int order = 1; order <= productMax; order++)
+{
+    var types = Repeat("T{0}", ", ", order);
 #>
         /// <summary><#=order#>要素の組を生成します。</summary>
         public static Product<<#=types#>> Create<<#=types#>>(<#=Repeat("T{0} v{0}", ", ", order)#>)
@@ -58,10 +58,10 @@ namespace Extensions
         }
     }
 <#
-    //1~productMax要素の組を生成する
-    foreach (var order in Enumerable.Range(1, productMax))
-    {
-        var className = "Product<" + Repeat("T{0}", ", ", order) + ">";
+//1~productMax要素の組を生成する
+for (int order = 1; order <= productMax; order++)
+{
+    var className = "Product<" + Repeat("T{0}", ", ", order) + ">";
 #>
 
     /// <summary>要素が<#=order#>個の組です。</summary>

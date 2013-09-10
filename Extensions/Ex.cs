@@ -33,14 +33,14 @@ namespace Extensions
         }
 
         /// <summary>初期値と前の状態から次の要素と状態を生成する関数によってシーケンスを生成します。</summary>
-        public static IEnumerable<T> Unfold<T, TState>(TState seed, Func<TState, Option<Tuple<T, TState>>> func)
+        public static IEnumerable<T> Unfold<T, TState>(TState seed, Func<TState, Option<Product<T, TState>>> func)
         {
             var state = seed;
             var loop = false;
             do
             {
                 var ret = func(state).Match(
-                    Some: a => { loop = true; state = a.Item2; return a.Item1; },
+                    Some: a => { loop = true; state = a.D2; return a.D1; },
                     None: () => { loop = false; return default(T); });
                 if (loop)
                     yield return ret;

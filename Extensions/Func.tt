@@ -16,10 +16,9 @@ namespace Extensions
     public static class Func
     {
 <#
-	foreach (var arity in Enumerable.Range(2, 15))
-    {
-			var types = Repeat("T{0}", ",", 1, arity);
-
+for (int arity = 1; arity <= funcMax; arity++)
+{
+    var types = Repeat("T{0}", ",", 1, arity);
 #>
         /// <summary><#=arity#>引数関数をカリー化します。</summary>
         public static <#= Nest("TResult", "Func<T{1}, {0}>", 1, arity) #> Curry<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
@@ -34,39 +33,37 @@ namespace Extensions
 
 <# } #>
 
-        /// <summary>0引数関数を0要素のProductを取る関数にします。</summary>
+        /// <summary>0引数関数を0要素の組を取る関数にします。</summary>
         public static Func<Product, TResult> Tuplize<TResult>(this Func<TResult> func)
         {
             return _ => func();
         }
-        /// <summary>0要素のProductを取る関数を0引数関数にします。</summary>
+        /// <summary>0要素の組を取る関数を0引数関数にします。</summary>
         public static Func<TResult> UnTuplize<TResult>(this Func<Product, TResult> func)
         {
             return () => func(Product.Create());
         }
 
 <#
-	foreach (var arity in Enumerable.Range(1, 7))
-    {
-			var types = Repeat("T{0}", ",", 1, arity);
-
+for (int arity = 1; arity <= Math.Min(funcMax, productMax); arity++)
+{
+	var types = Repeat("T{0}", ",", 1, arity);
 #>
-        /// <summary><#=arity#>引数関数を<#=arity#>要素のタプルを取る関数にします。</summary>
-        public static Func<Tuple<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
+        /// <summary><#=arity#>引数関数を<#=arity#>要素の組を取る関数にします。</summary>
+        public static Func<Product<<#= types #>>, TResult> Tuplize<<#= types #>, TResult>(this Func<<#= types #>, TResult> func)
         {
-            return tuple => func(<#= Repeat("tuple.Item{0}", ",", 1, arity) #>);
+            return prod => func(<#= Repeat("prod.D{0}", ",", 1, arity) #>);
         }
-        /// <summary><#=arity#>要素のタプルを取る関数を<#=arity#>引数関数にします。</summary>
-        public static Func<<#= types #>, TResult> UnTuplize<<#= types #>, TResult>(this Func<Tuple<<#= types #>>, TResult> func)
+        /// <summary><#=arity#>要素の組を取る関数を<#=arity#>引数関数にします。</summary>
+        public static Func<<#= types #>, TResult> UnTuplize<<#= types #>, TResult>(this Func<Product<<#= types #>>, TResult> func)
         {
-            return (<#=Repeat("v{0}", ",", 1, arity)#>) => func(Tuple.Create(<#= Repeat("v{0}", ",", 1, arity) #>));
+            return (<#=Repeat("v{0}", ",", 1, arity)#>) => func(Product.Create(<#= Repeat("v{0}", ",", 1, arity) #>));
         }
 <# } #>
 <#
-	foreach (var arity in Enumerable.Range(1, 15))
-    {
-			var types = Repeat("T{0}", ",", 1, arity);
-
+for (int arity = 1; arity <= funcMax; arity++)
+{
+	var types = Repeat("T{0}", ",", 1, arity);
 #>
         /// <summary>カリー化された<#=arity#>引数関数の第1引数を最後に回すことで部分適用の適用しない部分を実現します。</summary>
         public static <#= Nest("Func<T1, TResult>", "Func<T{1}, {0}>", 2, arity-1) #> _<<#= types #>, TResult>(

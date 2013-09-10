@@ -4,6 +4,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#
     var productMax = 16;
+	var funcMax = 16;
 #><#+
 string Nest(string seed, string format, int start, int count)
 {
