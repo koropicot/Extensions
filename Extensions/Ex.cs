@@ -47,7 +47,7 @@ namespace Extensions
             } while (loop);
         }
 
-        /// <summary>シーケンスの末尾に要素を追加します。</summary>
+        /// <summary>要素の後ろにシーケンスを追加します。</summary>
         public static IEnumerable<T> AddTail<T>(this T head, IEnumerable<T> tail)
         {
             yield return head;
